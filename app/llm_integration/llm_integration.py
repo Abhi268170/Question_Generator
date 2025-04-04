@@ -32,7 +32,10 @@ class LLMIntegration:
         self.model_name = model_name
         self.system_prompts = self._initialize_system_prompts()
         self.available_models = self._get_available_models()
-        # No automatic model selection - use specified model
+        
+        # Select the best model if available
+        if self.available_models and model_name not in self.available_models:
+            self.model_name = LLMModels.get_best_model_for_task(self.available_models)
     
     def _get_available_models(self) -> List[str]:
         """
@@ -80,9 +83,19 @@ class LLMIntegration:
         Returns:
             True if successful, False otherwise
         """
-        # Simply set the model name without checking availability
-        self.model_name = model_name
-        return True
+        # If the model is available, use it
+        if model_name in self.available_models:
+            self.model_name = model_name
+            return True
+        
+        # If we have no available models, just set the name (will use fallback mechanisms)
+        if not self.available_models:
+            self.model_name = model_name
+            return True
+            
+        # Otherwise, use the best available model
+        self.model_name = LLMModels.get_best_model_for_task(self.available_models)
+        return False
     
     def _initialize_system_prompts(self) -> Dict[str, str]:
         """
@@ -487,3 +500,156 @@ Focus specifically on the topic: {topic}"""
             line = line.strip()
             if line.startswith(("A.", "B.", "C.", "D.")):
                 option_letter = line[0]
+                option_text = line[2:].strip()
+                question["options"].append({"letter": option_letter, "text": option_text})
+            elif line.startswith("Correct Answer:"):
+                question["correct_answer"] = line.split(":", 1)[1].strip()
+    
+    def _parse_multiple_selection(self, question: Dict[str, Any], lines: List[str]) -> None:
+        """
+        Parse multiple selection question lines.
+        
+        Args:
+            question: Question object to update
+            lines: Lines to parse
+        """
+        for line in lines:
+            line = line.strip()
+            if line.startswith(("A.", "B.", "C.", "D.", "E.")):
+                option_letter = line[0]
+                option_text = line[2:].strip()
+                question["options"].append({"letter": option_letter, "text": option_text})
+            elif line.startswith("Correct Answers:"):
+                answers_text = line.split(":", 1)[1].strip()
+                question["correct_answer"] = [a.strip() for a in answers_text.split(",")]
+    
+    def _parse_true_false(self, question: Dict[str, Any], lines: List[str]) -> None:
+        """
+        Parse true/false question lines.
+        
+        Args:
+            question: Question object to update
+            lines: Lines to parse
+        """
+        for line in lines:
+            line = line.strip()
+            if line.startswith("Correct Answer:"):
+                answer = line.split(":", 1)[1].strip()
+                question["correct_answer"] = answer
+                question["options"] = [{"letter": "A", "text": "True"}, {"letter": "B", "text": "False"}]
+    
+    def _parse_short_answer(self, question: Dict[str, Any], lines: List[str]) -> None:
+        """
+        Parse short answer question lines.
+        
+        Args:
+            question: Question object to update
+            lines: Lines to parse
+        """
+        for line in lines:
+            line = line.strip()
+            if line.startswith("Model Answer:"):
+                model_answer = line.split(":", 1)[1].strip()
+                question["model_answer"] = model_answer
+    
+    def filter_questions(self, questions: List[Dict[str, Any]], content: str) -> List[Dict[str, Any]]:
+        """
+        Filter questions to ensure accuracy and quality.
+        
+        Args:
+            questions: List of questions to filter
+            content: Original content to verify against
+            
+        Returns:
+            Filtered list of questions
+        """
+        # Enhanced filtering implementation
+        filtered_questions = []
+        
+        for question in questions:
+            # Skip questions with missing required fields
+            if not self._validate_question_structure(question):
+                continue
+                
+            # Check if the question is relevant to the content
+            if self._is_question_relevant(question, content):
+                filtered_questions.append(question)
+        
+        return filtered_questions
+    
+    def _validate_question_structure(self, question: Dict[str, Any]) -> bool:
+        """
+        Validate that a question has all required fields.
+        
+        Args:
+            question: Question to validate
+            
+        Returns:
+            True if valid, False otherwise
+        """
+        # Check basic structure
+        if not question.get("question_text") or not question.get("question_type"):
+            return False
+            
+        # Check type-specific requirements
+        if question["question_type"] in ["multiple_choice", "multiple_selection"]:
+            if not question.get("options") or not question.get("correct_answer"):
+                return False
+                
+            # For multiple choice, ensure we have exactly 4 options
+            if question["question_type"] == "multiple_choice" and len(question.get("options", [])) != 4:
+                return False
+                
+            # For multiple selection, ensure we have exactly 5 options
+            if question["question_type"] == "multiple_selection" and len(question.get("options", [])) != 5:
+                return False
+                
+        elif question["question_type"] == "true_false":
+            if not question.get("correct_answer"):
+                return False
+                
+        elif question["question_type"] == "short_answer":
+            if not question.get("model_answer"):
+                return False
+                
+        return True
+    
+    def _is_question_relevant(self, question: Dict[str, Any], content: str) -> bool:
+        """
+        Check if a question is relevant to the content.
+        
+        Args:
+            question: Question to check
+            content: Content to check against
+            
+        Returns:
+            True if relevant, False otherwise
+        """
+        # Convert to lowercase for case-insensitive matching
+        question_text = question["question_text"].lower()
+        content_lower = content.lower()
+        
+        # Extract important words (longer than 4 chars)
+        words = question_text.split()
+        important_words = [w for w in words if len(w) > 4 and w.isalpha()]
+        
+        # If we have options, also check them for relevance
+        if question.get("options"):
+            for option in question["options"]:
+                option_text = option["text"].lower()
+                option_words = option_text.split()
+                important_option_words = [w for w in option_words if len(w) > 4 and w.isalpha()]
+                important_words.extend(important_option_words)
+        
+        # Remove duplicates
+        important_words = list(set(important_words))
+        
+        # Count how many important words appear in the content
+        matches = sum(1 for word in important_words if word in content_lower)
+        
+        # If more than 60% of the important words appear, consider it valid
+        # This is a stricter threshold than before
+        if len(important_words) > 0 and matches / len(important_words) > 0.6:
+            return True
+            
+        return False

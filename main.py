@@ -19,7 +19,7 @@ def main():
     app = create_app()
     
     # Initialize the question generator and monitor
-    question_generator = QuestionGenerator(model_name="gemma3")
+    question_generator = QuestionGenerator(model_name="llama3")
     question_monitor = QuestionMonitor()
     
     # Create upload directory if it doesn't exist
