@@ -1,0 +1,19 @@
+# Core PDF Processing
+PyPDF2>=3.0.0
+
+# Vector Storage & Embedding
+faiss-cpu>=1.7.4
+sentence-transformers>=2.2.2
+
+# LLM Integration
+ollama>=0.1.0
+langchain>=0.0.267
+
+# Web Interface
+Flask>=2.3.0
+Flask-WTF>=1.1.1
+
+# Utilities
+numpy>=1.24.0
+tqdm>=4.65.0
+python-dotenv>=1.0.0

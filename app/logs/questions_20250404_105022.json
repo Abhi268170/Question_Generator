@@ -1,0 +1,215 @@
+{
+  "timestamp": "2025-04-04 10:50:22",
+  "metadata": {
+    "pdf_filename": "1743743857_plants.pdf",
+    "question_type": "multiple_choice",
+    "topic": "anatomy of flowering plants",
+    "difficulty": "medium",
+    "language": "English",
+    "requested_count": 10,
+    "generated_count": 10,
+    "filtered_count": 8,
+    "timestamp": "2025-04-04 10:50:22"
+  },
+  "questions": [
+    {
+      "question_text": "What is the outermost layer of the primary plant body?",
+      "question_type": "multiple_choice",
+      "options": [
+        {
+          "letter": "A",
+          "text": "Epidermis"
+        },
+        {
+          "letter": "B",
+          "text": "Ground tissue system"
+        },
+        {
+          "letter": "C",
+          "text": "Vascular tissue system"
+        },
+        {
+          "letter": "D",
+          "text": "Mesophyll tissue"
+        }
+      ],
+      "correct_answer": "A."
+    },
+    {
+      "question_text": "Which type of hairs helps absorb water and minerals from the soil in root epidermal cells?",
+      "question_type": "multiple_choice",
+      "options": [
+        {
+          "letter": "A",
+          "text": "Unicellular elongations"
+        },
+        {
+          "letter": "B",
+          "text": "Multicellular appendages"
+        },
+        {
+          "letter": "C",
+          "text": "Trichomes"
+        },
+        {
+          "letter": "D",
+          "text": "Stomata"
+        }
+      ],
+      "correct_answer": "A."
+    },
+    {
+      "question_text": "What is absent in the xylem tissue system?",
+      "question_type": "multiple_choice",
+      "options": [
+        {
+          "letter": "A",
+          "text": "Phloem parenchyma"
+        },
+        {
+          "letter": "B",
+          "text": "Sclerenchyma cells"
+        },
+        {
+          "letter": "C",
+          "text": "Parenchyma cells"
+        },
+        {
+          "letter": "D",
+          "text": "Collenchyma cells"
+        }
+      ],
+      "correct_answer": "A."
+    },
+    {
+      "question_text": "What are the three basic tissue systems found in flowering plants?",
+      "question_type": "multiple_choice",
+      "options": [
+        {
+          "letter": "A",
+          "text": "Epidermal, ground, and vascular"
+        },
+        {
+          "letter": "B",
+          "text": "Monocot, dicot, and succulent"
+        },
+        {
+          "letter": "C",
+          "text": "Root, stem, and leaf"
+        },
+        {
+          "letter": "D",
+          "text": "Xylem, phloem, and cambium"
+        }
+      ],
+      "correct_answer": "A."
+    },
+    {
+      "question_text": "Which tissue system forms the outermost covering of the whole plant body?",
+      "question_type": "multiple_choice",
+      "options": [
+        {
+          "letter": "A",
+          "text": "Ground tissue system"
+        },
+        {
+          "letter": "B",
+          "text": "Vascular tissue system"
+        },
+        {
+          "letter": "C",
+          "text": "Epidermal tissue system"
+        },
+        {
+          "letter": "D",
+          "text": "Mesophyll tissue"
+        }
+      ],
+      "correct_answer": "C."
+    },
+    {
+      "question_text": "What is the name of the structure that includes epidermal cells, stomata, and trichomes?",
+      "question_type": "multiple_choice",
+      "options": [
+        {
+          "letter": "A",
+          "text": "Cuticle"
+        },
+        {
+          "letter": "B",
+          "text": "Epidermis"
+        },
+        {
+          "letter": "C",
+          "text": "Trichome layer"
+        },
+        {
+          "letter": "D",
+          "text": "Stomatal apparatus"
+        }
+      ],
+      "correct_answer": "B."
+    },
+    {
+      "question_text": "Which type of tissue system does NOT have phloem parenchyma?",
+      "question_type": "multiple_choice",
+      "options": [
+        {
+          "letter": "A",
+          "text": "Monocotyledonous plants"
+        },
+        {
+          "letter": "B",
+          "text": "Dicotyledonous plants"
+        },
+        {
+          "letter": "C",
+          "text": "Gymnosperms"
+        },
+        {
+          "letter": "D",
+          "text": "Angiosperms"
+        }
+      ],
+      "correct_answer": "A."
+    },
+    {
+      "question_text": "What is the study of internal plant structure called?",
+      "question_type": "multiple_choice",
+      "options": [
+        {
+          "letter": "A",
+          "text": "Morphology"
+        },
+        {
+          "letter": "B",
+          "text": "Anatomy"
+        },
+        {
+          "letter": "C",
+          "text": "Physiology"
+        },
+        {
+          "letter": "D",
+          "text": "Botany"
+        }
+      ],
+      "correct_answer": "B."
+    }
+  ],
+  "metrics": {
+    "question_count": 8,
+    "question_type": "multiple_choice",
+    "difficulty": "medium",
+    "language": "English",
+    "generation_success_rate": 0.8,
+    "filter_pass_rate": 0.8,
+    "average_question_length": 65.75,
+    "min_question_length": 42,
+    "max_question_length": 90,
+    "average_options_per_question": 4.0,
+    "average_option_length": 16.625,
+    "min_option_length": 6,
+    "max_option_length": 31
+  }
+}

@@ -1,0 +1,192 @@
+{
+  "timestamp": "2025-04-04 10:45:53",
+  "metadata": {
+    "pdf_filename": "1743743484_plants.pdf",
+    "question_type": "multiple_choice",
+    "topic": "anatomy of flowering plants",
+    "difficulty": "medium",
+    "language": "English",
+    "requested_count": 10,
+    "generated_count": 10,
+    "filtered_count": 7,
+    "timestamp": "2025-04-04 10:45:53"
+  },
+  "questions": [
+    {
+      "question_text": "What is the term for the study of the internal structure and functional organization of higher plants?",
+      "question_type": "multiple_choice",
+      "options": [
+        {
+          "letter": "A",
+          "text": "Morphology"
+        },
+        {
+          "letter": "B",
+          "text": "Anatomy"
+        },
+        {
+          "letter": "C",
+          "text": "Botany"
+        },
+        {
+          "letter": "D",
+          "text": "Physiology"
+        }
+      ],
+      "correct_answer": "B"
+    },
+    {
+      "question_text": "Which tissue system forms the outermost covering of the whole plant body?",
+      "question_type": "multiple_choice",
+      "options": [
+        {
+          "letter": "A",
+          "text": "Vascular Tissue System"
+        },
+        {
+          "letter": "B",
+          "text": "Epidermal Tissue System"
+        },
+        {
+          "letter": "C",
+          "text": "Ground Tissue System"
+        },
+        {
+          "letter": "D",
+          "text": "Stem Tissue System"
+        }
+      ],
+      "correct_answer": "B"
+    },
+    {
+      "question_text": "Which tissue system lacks phloem parenchyma cells?",
+      "question_type": "multiple_choice",
+      "options": [
+        {
+          "letter": "A",
+          "text": "Vascular Tissue System"
+        },
+        {
+          "letter": "B",
+          "text": "Epidermal Tissue System"
+        },
+        {
+          "letter": "C",
+          "text": "Ground Tissue System"
+        },
+        {
+          "letter": "D",
+          "text": "Stem Tissue System"
+        }
+      ],
+      "correct_answer": "A"
+    },
+    {
+      "question_text": "What is the term for the multicellular hairs found on the stem of flowering plants?",
+      "question_type": "multiple_choice",
+      "options": [
+        {
+          "letter": "A",
+          "text": "Trichomes"
+        },
+        {
+          "letter": "B",
+          "text": "Hairs"
+        },
+        {
+          "letter": "C",
+          "text": "Stomata"
+        },
+        {
+          "letter": "D",
+          "text": "Epidermis"
+        }
+      ],
+      "correct_answer": "A"
+    },
+    {
+      "question_text": "How many basic tissue systems are there in flowering plants?",
+      "question_type": "multiple_choice",
+      "options": [
+        {
+          "letter": "A",
+          "text": "Two"
+        },
+        {
+          "letter": "B",
+          "text": "Three"
+        },
+        {
+          "letter": "C",
+          "text": "Four"
+        },
+        {
+          "letter": "D",
+          "text": "Five"
+        }
+      ],
+      "correct_answer": "B"
+    },
+    {
+      "question_text": "Which tissue system includes epidermal cells, stomata, and epidermal appendages such as trichomes and hairs?",
+      "question_type": "multiple_choice",
+      "options": [
+        {
+          "letter": "A",
+          "text": "Vascular Tissue System"
+        },
+        {
+          "letter": "B",
+          "text": "Epidermal Tissue System"
+        },
+        {
+          "letter": "C",
+          "text": "Ground Tissue System"
+        },
+        {
+          "letter": "D",
+          "text": "Stem Tissue System"
+        }
+      ],
+      "correct_answer": "B"
+    },
+    {
+      "question_text": "What is the term for the unicellular elongations of epidermal cells found on roots?",
+      "question_type": "multiple_choice",
+      "options": [
+        {
+          "letter": "A",
+          "text": "Trichomes"
+        },
+        {
+          "letter": "B",
+          "text": "Hairs"
+        },
+        {
+          "letter": "C",
+          "text": "Root hairs"
+        },
+        {
+          "letter": "D",
+          "text": "Epidermis"
+        }
+      ],
+      "correct_answer": "C"
+    }
+  ],
+  "metrics": {
+    "question_count": 7,
+    "question_type": "multiple_choice",
+    "difficulty": "medium",
+    "language": "English",
+    "generation_success_rate": 0.7,
+    "filter_pass_rate": 0.7,
+    "average_question_length": 79.85714285714286,
+    "min_question_length": 50,
+    "max_question_length": 108,
+    "average_options_per_question": 4.0,
+    "average_option_length": 12.892857142857142,
+    "min_option_length": 3,
+    "max_option_length": 23
+  }
+}

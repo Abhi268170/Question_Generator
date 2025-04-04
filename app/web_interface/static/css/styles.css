@@ -1,0 +1,174 @@
+/* Custom styles for PDF Question Generator */
+
+/* General styling */
+body {
+    background-color: #f8f9fa;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.container {
+    max-width: 1200px;
+}
+
+/* Card styling */
+.card {
+    border-radius: 10px;
+    border: none;
+    overflow: hidden;
+}
+
+.card-header {
+    border-bottom: none;
+}
+
+/* Form styling */
+.form-control, .form-select {
+    border-radius: 5px;
+    padding: 10px 15px;
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: #6c63ff;
+    box-shadow: 0 0 0 0.25rem rgba(108, 99, 255, 0.25);
+}
+
+.btn-primary {
+    background-color: #6c63ff;
+    border-color: #6c63ff;
+    border-radius: 5px;
+    padding: 10px 20px;
+    transition: all 0.3s ease;
+}
+
+.btn-primary:hover, .btn-primary:focus {
+    background-color: #5a52d5;
+    border-color: #5a52d5;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Question styling */
+.question-card {
+    padding: 15px;
+    border-radius: 8px;
+    background-color: #ffffff;
+    transition: all 0.3s ease;
+}
+
+.question-card:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.options-list {
+    margin-left: 20px;
+    margin-top: 10px;
+}
+
+/* Processing page */
+.progress {
+    height: 20px;
+    border-radius: 10px;
+    background-color: #e9ecef;
+}
+
+.progress-bar {
+    background-color: #6c63ff;
+}
+
+/* Animation for processing page */
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.05);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+#status-message {
+    animation: pulse 2s infinite;
+}
+
+/* Results page */
+.model-answer {
+    background-color: #f8f9fa;
+    padding: 15px;
+    border-radius: 8px;
+    border-left: 4px solid #6c63ff;
+}
+
+/* Download button */
+#download-btn {
+    transition: all 0.3s ease;
+}
+
+#download-btn:hover {
+    background-color: #e9ecef;
+    transform: translateY(-2px);
+}
+
+/* Footer */
+footer {
+    margin-top: 50px;
+    padding-top: 20px;
+    border-top: 1px solid #e9ecef;
+}
+
+/* Additional styles for the carousel view */
+
+/* Carousel container styling */
+.carousel-container {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+/* Question card in carousel */
+.carousel-item .question-card {
+    min-height: 300px;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+/* Carousel navigation buttons */
+.carousel-control-prev, 
+.carousel-control-next {
+    width: 5%;
+    opacity: 0.8;
+}
+
+.carousel-control-prev-icon,
+.carousel-control-next-icon {
+    padding: 15px;
+    border-radius: 50%;
+}
+
+/* Carousel counter */
+#carousel-counter {
+    display: inline-block;
+    padding: 5px 15px;
+    background-color: #f0f0f0;
+    border-radius: 20px;
+    font-size: 0.9rem;
+}
+
+/* View toggle buttons */
+.btn-group .btn.active {
+    background-color: #0d6efd;
+    color: white;
+}
+
+/* Animation for view transitions */
+#list-view, #carousel-view {
+    transition: opacity 0.3s ease-in-out;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .carousel-item .question-card {
+        min-height: 400px;
+    }
+}

@@ -1,0 +1,23 @@
+{
+  "timestamp": "2025-04-04 10:40:16",
+  "metadata": {
+    "pdf_filename": "1743743415_plants.pdf",
+    "question_type": "multiple_choice",
+    "topic": "anatomy of flowering plants",
+    "difficulty": "medium",
+    "language": "English",
+    "requested_count": 10,
+    "generated_count": 10,
+    "filtered_count": 0,
+    "timestamp": "2025-04-04 10:40:16"
+  },
+  "questions": [],
+  "metrics": {
+    "question_count": 0,
+    "question_type": "multiple_choice",
+    "difficulty": "medium",
+    "language": "English",
+    "generation_success_rate": 0.0,
+    "filter_pass_rate": 0.0
+  }
+}
