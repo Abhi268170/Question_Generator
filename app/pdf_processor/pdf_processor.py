@@ -13,6 +13,8 @@ import re
 from typing import List, Dict, Tuple, Optional
 import PyPDF2
 from langchain.text_splitter import RecursiveCharacterTextSplitter
+from langdetect import detect, DetectorFactory
+from collections import Counter
 
 class PDFProcessor:
     """
@@ -61,6 +63,8 @@ class PDFProcessor:
         
         # Clean the extracted text
         text = self._clean_text(text)
+        if self._is_junk_text(text):
+            raise ValueError("Extracted text appears to be garbage or unreadable.")
         return text
     
     def _clean_text(self, text: str) -> str:
@@ -139,7 +143,7 @@ class PDFProcessor:
         """
         # Extract text from PDF
         full_text = self.extract_text_from_pdf(pdf_path)
-        
+        print(full_text)
         # Filter by topic if specified
         if topic and topic.strip():
             topic_text = self.extract_topic_content(full_text, topic)
@@ -152,8 +156,9 @@ class PDFProcessor:
         chunks = self.chunk_text(text_to_chunk)
         
         # Get PDF metadata
-        metadata = self._extract_metadata(pdf_path)
-        
+        # metadata = self._extract_metadata(pdf_path)
+        dominant_language = self.validate_dominant_language(full_text)
+        print(dominant_language)
         return {
             "full_text": full_text,
             "chunks": chunks,
@@ -184,7 +189,102 @@ class PDFProcessor:
                 
                 metadata['page_count'] = len(reader.pages)
                 metadata['filename'] = os.path.basename(pdf_path)
+            # with pdfplumber.open(path) as pdf:
+            #     content = ''
+            #     for i in range(len(pdf.pages)):
+            #         page = pdf.pages[i]
+            #         page_content = '\n'.join(page.extract_text().split('\n')[:-1])
+            #         content = content + page_content
+            #     print(content)
         except Exception as e:
             print(f"Warning: Could not extract metadata: {str(e)}")
         
         return metadata
+    def detect_languages(self, text: str, chunk_size: int = 500) -> Dict[str, float]:
+        """
+        Detect the distribution of languages in the text.
+        
+        Args:
+            text: The cleaned text extracted from the PDF.
+            chunk_size: Number of characters per chunk to analyze.
+            
+        Returns:
+            A dictionary with language codes and their percentage frequencies.
+        """
+        chunks = self.chunk_text(text)
+        detected = []
+
+        for chunk in chunks:
+            chunk = chunk.strip()
+            if not chunk:
+                continue
+            try:
+                lang = detect(chunk)
+                detected.append(lang)
+            except Exception:
+                continue  # Skip chunks where detection fails
+
+        if not detected:
+            return {"undetected": 100.0}
+
+        counts = Counter(detected)
+        total = sum(counts.values())
+
+        return {
+            lang: round((count / total) * 100, 2)
+            for lang, count in counts.items()
+        }
+    def validate_dominant_language(self, text: str, threshold: float = 180.0) -> str:
+        """
+        Detect the dominant language and ensure it's allowed and above the threshold.
+
+        Args:
+            text: Extracted PDF text
+            threshold: Minimum percentage required for a language to be considered dominant
+
+        Returns:
+            Dominant language code (e.g., 'en', 'fr', etc.)
+
+        Raises:
+            ValueError if no language exceeds the threshold or language not supported
+        """
+        allowed_languages = {'en', 'fr', 'de', 'zh', 'ar', 'it'}  # English-, French-, German-, Chinese, Arabic, Italian-
+
+        language_distribution = self.detect_languages(text)
+        print("---------------------------------------------------------------")
+        print("Detected languages:", language_distribution)
+        print("---------------------------------------------------------------")
+
+        dominant_lang = max(language_distribution.items(), key=lambda x: x[1])
+
+        if dominant_lang[1] >= threshold:
+            if dominant_lang[0] in allowed_languages:
+                return dominant_lang[0]
+            else:
+                raise ValueError("The detected dominant language is not supported. Allowed languages: French, English, German, Chinese, Arabic, Italian.")
+        else:
+            raise ValueError("Please upload a valid PDF with a dominant language (at least 70%).")
+
+    def _is_junk_text(self, text: str) -> bool:
+        # Check for very short text
+        if len(text) < 100:
+            return True
+
+        # Check if same word repeats a lot
+        words = re.findall(r'\w+', text)
+        if not words:
+            return True
+
+        unique_word_ratio = len(set(words)) / len(words)
+        if unique_word_ratio < 0.3:
+            return True
+
+        # Optional: check language detection
+        # try:
+        #     langs = detect_langs(text)
+        #     if langs[0].lang not in ['hi', 'en'] or langs[0].prob < 0.7:
+        #         return True
+        # except:
+        #     return True
+
+        return False
