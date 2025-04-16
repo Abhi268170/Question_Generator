@@ -24,7 +24,7 @@ class LLMIntegration:
     A class for integrating with Ollama to generate questions based on retrieved content.
     """
     
-    def __init__(self, model_name: str = "llama3",api_key: str = "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"):
+    def __init__(self, model_name: str = "llama3",api_key: str = "key"):
         """
         Initialize the LLM integration with the specified model.
         
