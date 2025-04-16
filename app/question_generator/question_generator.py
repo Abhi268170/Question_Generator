@@ -94,7 +94,7 @@ class QuestionGenerator:
                 question_type=question_type,
                 num_questions=questions_per_section,
                 difficulty=difficulty,
-                language=language,
+                language=pdf_data["language"],
                 topic=topic or "general",
                 temperature=temperature
             )

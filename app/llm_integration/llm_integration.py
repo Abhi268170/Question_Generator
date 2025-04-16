@@ -16,13 +16,15 @@ from typing import List, Dict, Any, Optional, Union
 import ollama
 from langchain.prompts import PromptTemplate
 from app.llm_integration.llm_models import LLMModels
+import requests
+import json
 
 class LLMIntegration:
     """
     A class for integrating with Ollama to generate questions based on retrieved content.
     """
     
-    def __init__(self, model_name: str = "llama3"):
+    def __init__(self, model_name: str = "llama3",api_key: str = "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"):
         """
         Initialize the LLM integration with the specified model.
         
@@ -30,6 +32,7 @@ class LLMIntegration:
             model_name: Name of the Ollama model to use
         """
         self.model_name = model_name
+        self.api_key = api_key
         self.system_prompts = self._initialize_system_prompts()
         self.available_models = self._get_available_models()
         
@@ -106,137 +109,137 @@ class LLMIntegration:
         """
         return {
             "multiple_choice": """You are an expert question generator specializing in creating high-quality multiple-choice questions.
-Your task is to generate {num_questions} multiple-choice questions based on the provided content.
-Each question must:
-1. Be directly based on the provided content
-2. Have exactly 4 options (A, B, C, D)
-3. Have exactly one correct answer
-4. Have clearly wrong alternative options that are plausible but incorrect
-5. Be at {difficulty} difficulty level
-6. Be written in {language}
+        Your task is to generate {num_questions} multiple-choice questions based on the provided content.
+        Each question must:
+        1. Be directly based on the provided content
+        2. Have exactly 4 options (A, B, C, D)
+        3. Have exactly one correct answer
+        4. Have clearly wrong alternative options that are plausible but incorrect
+        5. Be at {difficulty} difficulty level
+        6. Be written in {language}
 
-For "low" difficulty:
-- Focus on basic recall and understanding
-- Use straightforward language
-- Make distractors clearly different from the correct answer
+        For "low" difficulty:
+        - Focus on basic recall and understanding
+        - Use straightforward language
+        - Make distractors clearly different from the correct answer
 
-For "medium" difficulty:
-- Test application and analysis
-- Include some nuance in the questions
-- Make distractors somewhat similar to the correct answer
+        For "medium" difficulty:
+        - Test application and analysis
+        - Include some nuance in the questions
+        - Make distractors somewhat similar to the correct answer
 
-For "high" difficulty:
-- Test evaluation and synthesis
-- Use complex language and concepts
-- Make distractors very similar to the correct answer, requiring careful discrimination
+        For "high" difficulty:
+        - Test evaluation and synthesis
+        - Use complex language and concepts
+        - Make distractors very similar to the correct answer, requiring careful discrimination
 
-Format each question as follows:
-Q1. [Question text]
-A. [Option A]
-B. [Option B]
-C. [Option C]
-D. [Option D]
-Correct Answer: [A/B/C/D]
+        Format each question as follows:
+        Q1. [Question text]
+        A. [Option A]
+        B. [Option B]
+        C. [Option C]
+        D. [Option D]
+        Correct Answer: [A/B/C/D]
 
-Ensure questions are non-duplicative, clear, and test understanding rather than mere recall.
-Focus specifically on the topic: {topic}""",
+        Ensure questions are non-duplicative, clear, and test understanding rather than mere recall.
+        Focus specifically on the topic: {topic}""",
 
-            "multiple_selection": """You are an expert question generator specializing in creating high-quality multiple-selection questions.
-Your task is to generate {num_questions} multiple-selection questions based on the provided content.
-Each question must:
-1. Be directly based on the provided content
-2. Have exactly 5 options (A, B, C, D, E)
-3. Have 2-3 correct answers
-4. Have clearly wrong alternative options that are plausible but incorrect
-5. Be at {difficulty} difficulty level
-6. Be written in {language}
+                    "multiple_selection": """You are an expert question generator specializing in creating high-quality multiple-selection questions.
+        Your task is to generate {num_questions} multiple-selection questions based on the provided content.
+        Each question must:
+        1. Be directly based on the provided content
+        2. Have exactly 5 options (A, B, C, D, E)
+        3. Have 2-3 correct answers
+        4. Have clearly wrong alternative options that are plausible but incorrect
+        5. Be at {difficulty} difficulty level
+        6. Be written in {language}
 
-For "low" difficulty:
-- Focus on basic recall and understanding
-- Use straightforward language
-- Make incorrect options clearly different from correct ones
+        For "low" difficulty:
+        - Focus on basic recall and understanding
+        - Use straightforward language
+        - Make incorrect options clearly different from correct ones
 
-For "medium" difficulty:
-- Test application and analysis
-- Include some nuance in the questions
-- Make incorrect options somewhat similar to correct ones
+        For "medium" difficulty:
+        - Test application and analysis
+        - Include some nuance in the questions
+        - Make incorrect options somewhat similar to correct ones
 
-For "high" difficulty:
-- Test evaluation and synthesis
-- Use complex language and concepts
-- Make incorrect options very similar to correct ones, requiring careful discrimination
+        For "high" difficulty:
+        - Test evaluation and synthesis
+        - Use complex language and concepts
+        - Make incorrect options very similar to correct ones, requiring careful discrimination
 
-Format each question as follows:
-Q1. [Question text] (Select all that apply)
-A. [Option A]
-B. [Option B]
-C. [Option C]
-D. [Option D]
-E. [Option E]
-Correct Answers: [List all correct options, e.g., A, C, E]
+        Format each question as follows:
+        Q1. [Question text] (Select all that apply)
+        A. [Option A]
+        B. [Option B]
+        C. [Option C]
+        D. [Option D]
+        E. [Option E]
+        Correct Answers: [List all correct options, e.g., A, C, E]
 
-Ensure questions are non-duplicative, clear, and test understanding rather than mere recall.
-Focus specifically on the topic: {topic}""",
+        Ensure questions are non-duplicative, clear, and test understanding rather than mere recall.
+        Focus specifically on the topic: {topic}""",
 
-            "true_false": """You are an expert question generator specializing in creating high-quality true/false questions.
-Your task is to generate {num_questions} true/false questions based on the provided content.
-Each question must:
-1. Be directly based on the provided content
-2. Have a clear true or false answer
-3. Be at {difficulty} difficulty level
-4. Be written in {language}
+                    "true_false": """You are an expert question generator specializing in creating high-quality true/false questions.
+        Your task is to generate {num_questions} true/false questions based on the provided content.
+        Each question must:
+        1. Be directly based on the provided content
+        2. Have a clear true or false answer
+        3. Be at {difficulty} difficulty level
+        4. Be written in {language}
 
-For "low" difficulty:
-- Focus on basic facts directly stated in the text
-- Use straightforward language
-- Avoid ambiguity
+        For "low" difficulty:
+        - Focus on basic facts directly stated in the text
+        - Use straightforward language
+        - Avoid ambiguity
 
-For "medium" difficulty:
-- Test inference and interpretation
-- Include some nuance
-- Require understanding of relationships between concepts
+        For "medium" difficulty:
+        - Test inference and interpretation
+        - Include some nuance
+        - Require understanding of relationships between concepts
 
-For "high" difficulty:
-- Test evaluation of complex statements
-- Use precise language where small details matter
-- Require deep understanding of the material
+        For "high" difficulty:
+        - Test evaluation of complex statements
+        - Use precise language where small details matter
+        - Require deep understanding of the material
 
-Format each question as follows:
-Q1. [Statement]
-Correct Answer: [True/False]
+        Format each question as follows:
+        Q1. [Statement]
+        Correct Answer: [True/False]
 
-Ensure statements are non-duplicative, clear, and test understanding rather than mere recall.
-Focus specifically on the topic: {topic}""",
+        Ensure statements are non-duplicative, clear, and test understanding rather than mere recall.
+        Focus specifically on the topic: {topic}""",
 
-            "short_answer": """You are an expert question generator specializing in creating high-quality short answer questions.
-Your task is to generate {num_questions} short answer questions based on the provided content.
-Each question must:
-1. Be directly based on the provided content
-2. Be answerable in 1-3 sentences
-3. Be at {difficulty} difficulty level
-4. Be written in {language}
+                    "short_answer": """You are an expert question generator specializing in creating high-quality short answer questions.
+        Your task is to generate {num_questions} short answer questions based on the provided content.
+        Each question must:
+        1. Be directly based on the provided content
+        2. Be answerable in 1-3 sentences
+        3. Be at {difficulty} difficulty level
+        4. Be written in {language}
 
-For "low" difficulty:
-- Focus on basic recall and understanding
-- Ask for definitions or simple explanations
-- Have straightforward answers directly from the text
+        For "low" difficulty:
+        - Focus on basic recall and understanding
+        - Ask for definitions or simple explanations
+        - Have straightforward answers directly from the text
 
-For "medium" difficulty:
-- Test application and analysis
-- Ask for explanations of relationships or processes
-- Require synthesis of information from different parts of the text
+        For "medium" difficulty:
+        - Test application and analysis
+        - Ask for explanations of relationships or processes
+        - Require synthesis of information from different parts of the text
 
-For "high" difficulty:
-- Test evaluation and creation
-- Ask for justifications or assessments
-- Require deep understanding and critical thinking
+        For "high" difficulty:
+        - Test evaluation and creation
+        - Ask for justifications or assessments
+        - Require deep understanding and critical thinking
 
-Format each question as follows:
-Q1. [Question text]
-Model Answer: [Brief model answer that would be expected]
+        Format each question as follows:
+        Q1. [Question text]
+        Model Answer: [Brief model answer that would be expected]
 
-Ensure questions are non-duplicative, clear, and test understanding rather than mere recall.
-Focus specifically on the topic: {topic}"""
+        Ensure questions are non-duplicative, clear, and test understanding rather than mere recall.
+        Focus specifically on the topic: {topic}"""
         }
     
     def get_system_prompt(self, question_type: str, params: Dict[str, Any]) -> str:
@@ -323,20 +326,14 @@ Focus specifically on the topic: {topic}"""
             
             try:
                 # Call Ollama API
-                response = ollama.chat(
-                    model=self.model_name,
-                    messages=[
-                        {"role": "system", "content": system_prompt},
-                        {"role": "user", "content": user_prompt}
-                    ],
-                    options={
-                        "temperature": temperature,
-                        "num_predict": 4096,  # Increase token limit for longer responses
-                    }
+                response = self._call_openrouter_api(
+                    system_prompt=system_prompt,
+                    user_prompt=user_prompt,
+                    temperature=temperature
                 )
                 
                 # Extract the generated questions
-                raw_questions = response["message"]["content"]
+                raw_questions = response
                 
                 # Parse the questions based on the question type
                 batch_parsed_questions = self._parse_questions(raw_questions, question_type)
@@ -572,8 +569,8 @@ Focus specifically on the topic: {topic}"""
                 continue
                 
             # Check if the question is relevant to the content
-            if self._is_question_relevant(question, content):
-                filtered_questions.append(question)
+            # if self._is_question_relevant(question, content):
+            filtered_questions.append(question)
         
         return filtered_questions
     
@@ -649,7 +646,74 @@ Focus specifically on the topic: {topic}"""
         
         # If more than 60% of the important words appear, consider it valid
         # This is a stricter threshold than before
-        if len(important_words) > 0 and matches / len(important_words) > 0.6:
+        if len(important_words) > 0 and matches / len(important_words) > 0.3:
             return True
             
         return False
+
+    def _call_openrouter_api(self, system_prompt: str, user_prompt: str, temperature: float = 0.2) -> str:
+        """
+        Call the OpenRouter API to generate text.
+       
+        Args:
+            system_prompt: System prompt
+            user_prompt: User prompt
+            temperature: Temperature parameter
+           
+        Returns:
+            Generated text
+        """
+        if not self.api_key:
+            raise ValueError("OpenRouter API key is required")
+       
+        # Validate model name - make sure it's fully qualified
+        # model_name = self.model_name
+        # if "/" not in model_name:
+        #     # If not fully qualified, try to map it to a proper model ID
+        #     # model_mapping = {
+        #     #    "llama3": "openrouter/quasar-alpha",
+        #     #     # Add other mappings as needed
+        #     # }
+        #     # model_name = model_mapping.get(model_name, self.model_name)
+        #     print(f"Mapped model name '{self.model_name}' to '{model_name}'")
+       
+        headers = {
+            "Authorization": f"Bearer {self.api_key}",
+            "Content-Type": "application/json",
+            "HTTP-Referer": "https://localhost:5000",  # Add a referer for API tracking
+            "X-Title": "PDF Question Generator"  # Add a title for API tracking
+        }
+       
+        payload = {
+            "model": "google/gemini-2.5-pro-exp-03-25:free",
+            "messages": [
+                {"role": "system", "content": system_prompt},
+                {"role": "user", "content": user_prompt}
+            ],
+            "temperature": temperature,
+            "max_tokens": 4068 # Slightly lower to ensure we're within limits
+        }
+       
+        try:
+            # print(f"Calling OpenRouter API with model: {model_name}")
+            response = requests.post(
+                "https://openrouter.ai/api/v1/chat/completions",
+                headers=headers,
+                json=payload,
+                timeout=120  # Add a longer timeout for larger responses
+            )
+           
+            if response.status_code != 200:
+                print(f"Error response: {response.text}")
+                raise Exception(f"OpenRouter API error: {response.status_code} - {response.text}")
+           
+            response_data = response.json()
+            if "choices" not in response_data or len(response_data["choices"]) == 0:
+                print(f"Unexpected response format: {response_data}")
+                return ""
+               
+            return response_data["choices"][0]["message"]["content"]
+        except Exception as e:
+            print(f"Exception in OpenRouter API call: {str(e)}")
+            # Return an empty string so parsing won't fail
+            return ""
